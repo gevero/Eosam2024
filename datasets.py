@@ -1,22 +1,39 @@
+# import libraries
 import torch
 import torch.utils.data as data
-import pandas as pd
 import numpy as np
 
-# Define your custom dataset class (if necessary)
 class SpectraDataset(data.Dataset):
+    """
+    Custom dataset class for loading and processing spectral data.
+
+    Args:
+        X_df (pd.DataFrame): DataFrame containing the features.
+        y_df (pd.DataFrame): DataFrame containing the labels.
+    """
+
     def __init__(self, X_df, y_df):
+        """
+        Initializes the dataset with the provided features and labels.
+        """
 
         # storing dataframes as features and labels
-        self.features = X_df
-        self.labels = y_df
+        self.X = X_df
+        self.y = y_df
 
     def __len__(self):
-        return len(self.features)
+        """
+        Returns the length of the dataset (number of samples).
+        """
+
+        return len(self.X)
 
     def __getitem__(self, idx):
+        """
+        Retrieves a X and y pair for a given index.
+        """
 
-        # Extract features and labels from the data
-        features = torch.tensor(self.features.iloc[idx].values.astype(np.float32))
-        label = torch.tensor(self.labels.iloc[idx].astype(np.float32))
-        return features, label
+         # Extract features and labels from the data
+        X = torch.tensor(self.X.iloc[idx].values.astype(np.float32))
+        y = torch.tensor(self.y.iloc[idx].astype(np.float32))
+        return X, y

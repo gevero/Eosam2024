@@ -1,1 +1,3 @@
 tb_logs/
+*.pyc
+__pycache__/*

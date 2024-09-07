@@ -1,23 +1,23 @@
-import torch
 import torch.nn as nn
 
+
 class BaseBlock(nn.Module):
-    def __init__(self, in_features, out_features,p=0.2):
-        super(BaseBlock, self).__init__()
-        self.linear = nn.Linear(in_features, out_features,bias=False)
+    def __init__(self, in_features, out_features, p=0.2, activation=nn.GELU()):
+        super().__init__()
+        self.linear = nn.Linear(in_features, out_features, bias=False)
         self.dropout = nn.Dropout(p=p)
-        self.activation = nn.GELU()
+        self.activation = activation
 
     def forward(self, x):
         x = self.linear(x)
         x = self.activation(x)
         x = self.dropout(x)
         return x
-    
+
 
 class SigmaBlock(nn.Module):
-    def __init__(self, in_features, out_features,p=0.2):
-        super(SigmaBlock, self).__init__()
+    def __init__(self, in_features, out_features, p=0.2):
+        super().__init__()
         self.linear = nn.Linear(in_features, out_features)
         self.dropout = nn.Dropout(p=p)
         self.sigma = nn.Sigmoid()
@@ -30,14 +30,16 @@ class SigmaBlock(nn.Module):
 
 class LinearBlock(nn.Module):
     def __init__(self, in_features, out_features):
-        super(LinearBlock, self).__init__()
-        self.linear = nn.Linear(in_features, out_features,bias=False)
+        super().__init__()
+        self.linear = nn.Linear(in_features, out_features, bias=False)
 
     def forward(self, x):
         x = self.linear(x)
         return x
 
+
 import torch.nn as nn
+
 
 class ResidualLayer(nn.Module):
     """Fully connected residual layer with batch normalization, activation, and dropout.
@@ -60,7 +62,7 @@ class ResidualLayer(nn.Module):
     """
 
     def __init__(self, in_features, out_features, dropout_p=0.2):
-        super(ResidualLayer, self).__init__()
+        super().__init__()
 
         # first set of transformations
         self.fc1 = nn.Linear(in_features, out_features)
@@ -108,11 +110,23 @@ class ResidualLayer(nn.Module):
 
         return x
 
+
 class UpsampleConv1d(nn.Module):
-    def __init__(self, in_channels, out_channels, output_size, kernel_size, stride=1, padding=0, dilation=1):
-        super(UpsampleConv1d, self).__init__()
-        self.conv = nn.Conv1d(in_channels, out_channels, kernel_size, stride, padding, dilation)
-        self.upsample = nn.Upsample(size=output_size, mode='nearest')
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        output_size,
+        kernel_size,
+        stride=1,
+        padding=0,
+        dilation=1,
+    ):
+        super().__init__()
+        self.conv = nn.Conv1d(
+            in_channels, out_channels, kernel_size, stride, padding, dilation
+        )
+        self.upsample = nn.Upsample(size=output_size, mode="nearest")
 
     def forward(self, x):
         x = self.conv(x)

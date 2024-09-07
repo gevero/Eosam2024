@@ -1,5 +1,7 @@
 import torch
 
+
+# the training loop
 def train(dataloader, model, loss_fn, optimizer, device):
     size = len(dataloader.dataset)
     model.train()
@@ -21,19 +23,20 @@ def train(dataloader, model, loss_fn, optimizer, device):
 
     return loss
 
+
+# the validation loop
 def val(dataloader, model, loss_fn, device):
-    size = len(dataloader.dataset)
     num_batches = len(dataloader)
     model.eval()
-    test_loss = 0
+    val_loss = 0
 
     with torch.no_grad():
         for X, y in dataloader:
             X, y = X.to(device), y.to(device)
             pred = model(X)
-            test_loss += loss_fn(pred, y).item()
-    test_loss /= num_batches
+            val_loss += loss_fn(pred, y).item()
+    val_loss /= num_batches
     print("\n")
-    print(f"Validation loss: {test_loss:>8f} \n")
+    print(f"Validation loss: {val_loss:>8f} \n")
 
-    return test_loss
+    return val_loss
