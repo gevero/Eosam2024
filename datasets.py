@@ -12,7 +12,7 @@ class SpectraDataset(data.Dataset):
         y_df (pd.DataFrame): DataFrame containing the labels.
     """
 
-    def __init__(self, X_df, y_df):
+    def __init__(self, X_df, y_df, direction = 'forward'):
         """
         Initializes the dataset with the provided features and labels.
         """
@@ -20,6 +20,7 @@ class SpectraDataset(data.Dataset):
         # storing dataframes as features and labels
         self.X = X_df
         self.y = y_df
+        self.direction = direction
 
     def __len__(self):
         """
@@ -33,7 +34,13 @@ class SpectraDataset(data.Dataset):
         Retrieves a X and y pair for a given index.
         """
 
-         # Extract features and labels from the data
-        X = torch.tensor(self.X.iloc[idx].values.astype(np.float32))
-        y = torch.tensor(self.y.iloc[idx].astype(np.float32))
+        if self.direction == 'forward':
+            # Extract features and labels from the data
+            X = torch.tensor(self.X.iloc[idx].values.astype(np.float32))
+            y = torch.tensor(self.y.iloc[idx].astype(np.float32))
+        else:
+            # Extract features and labels from the data
+            X = torch.tensor(self.X.iloc[idx].astype(np.float32))
+            y = torch.tensor(self.y.iloc[idx].values.astype(np.float32))
+
         return X, y

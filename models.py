@@ -1,5 +1,5 @@
 import torch.nn as nn
-from layers import BaseBlock, LinearBlock, ResidualLayer
+from layers import BaseBlock, LinearBlock, SigmaBlock
 
 
 class SimpleMLP(nn.Module):
@@ -74,17 +74,37 @@ class FlexibleMLP(nn.Module):
         return x
 
 
-class ResidualMLP(nn.Module):
-    def __init__(self, hidden_layers=[5, 1000, 1000, 1000, 1000, 1000, 200]):
+class FlexibleInverseMLP(nn.Module):
+    def __init__(
+        self,
+        hidden_layers=[200, 1000, 1000, 1000, 1000, 1000, 2, 3, 3],
+        p=0.2,
+        activation=nn.GELU(),
+    ):
         super().__init__()
 
         self.layers = nn.ModuleList()
-        for i in range(1, len(hidden_layers) - 1):
-            self.layers.append(ResidualLayer(hidden_layers[i - 1], hidden_layers[i]))
-        self.final_block = LinearBlock(hidden_layers[-2], hidden_layers[-1])
+        for i in range(1, len(hidden_layers) - 3):
+            self.layers.append(
+                BaseBlock(
+                    hidden_layers[i - 1], hidden_layers[i], p=p, activation=activation
+                )
+            )
+
+        # define 2 classification heads and 1 regression head
+        self.lattice_head = LinearBlock(hidden_layers[-4], hidden_layers[-3])
+        self.material_head = LinearBlock(hidden_layers[-4], hidden_layers[-2])
+        self.geometry_head = LinearBlock(hidden_layers[-4], hidden_layers[-1])
 
     def forward(self, x):
+
+        # common path
         for layer in self.layers:
             x = layer(x)
-        x = self.final_block(x)
-        return x
+
+        # three heads
+        x_lattice = self.lattice_head(x)
+        x_material = self.material_head(x)
+        x_geometry = self.geometry_head(x)
+
+        return x_lattice,x_material,x_geometry
