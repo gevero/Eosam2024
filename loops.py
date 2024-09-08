@@ -57,7 +57,7 @@ def train_inverse(dataloader, model, loss_reg, loss_ce, optimizer, device):
         true_g = y[:,2:].to(device)
         # print(pred_l,pred_m,pred_g)
         # print(true_l,true_m,true_g)
-        loss = loss_ce(pred_l, true_l) + loss_ce(pred_m, true_m) + loss_reg(pred_g, true_g) 
+        loss = loss_ce(pred_l, true_l) + loss_ce(pred_m, true_m) + 5.0*loss_reg(pred_g, true_g) 
 
         # Backpropagation
         loss.backward()
