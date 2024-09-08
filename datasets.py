@@ -34,6 +34,7 @@ class SpectraDataset(data.Dataset):
         Retrieves a X and y pair for a given index.
         """
 
+        # different datasets for direct and inverse modeling
         if self.direction == 'direct':
             # Extract features and labels from the data
             X = torch.tensor(self.X.iloc[idx].values.astype(np.float32))

@@ -43,7 +43,7 @@ def val_direct(dataloader, model, loss_fn, device):
     return val_loss
 
 
-# the training loop
+# the inverse training loop
 def train_inverse(dataloader, model, loss_reg, loss_ce, optimizer, device):
     size = len(dataloader.dataset)
     model.train()
@@ -55,8 +55,7 @@ def train_inverse(dataloader, model, loss_reg, loss_ce, optimizer, device):
         true_l = y[:,0].type(torch.LongTensor).to(device)
         true_m = y[:,1].type(torch.LongTensor).to(device)
         true_g = y[:,2:].to(device)
-        # print(pred_l,pred_m,pred_g)
-        # print(true_l,true_m,true_g)
+
         loss = loss_ce(pred_l, true_l) + loss_ce(pred_m, true_m) + 5.0*loss_reg(pred_g, true_g) 
 
         # Backpropagation
@@ -71,7 +70,7 @@ def train_inverse(dataloader, model, loss_reg, loss_ce, optimizer, device):
     return loss
 
 
-# the validation loop
+# the inverse validation loop
 def val_inverse(dataloader, model, loss_reg, loss_ce, device):
     num_batches = len(dataloader)
     model.eval()
